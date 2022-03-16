@@ -35,22 +35,27 @@ class WzMutableKey {
       startIndex = _keys!.length;
     }
 
-    var iv = IV(_iv);
-    final encrypter = Encrypter(AES(Key(_aesUserKey), mode: AESMode.ecb));
+    var zeroIv = IV(Uint8List(0));  // ECB mode does not use IV.
+    final aes = AES(Key(_aesUserKey), mode: AESMode.ecb);
+
+    Uint8List encrypted;
 
     // Encrypted [block] is the first 16 bytes (iv * 4) of the keys.
     // From 17 to size-1 bytes, every 16-byte block is encrypted from the previous block.
-    for (var i = startIndex; i < size; i += 16) {
-      if (i == 0) {
-        var block = Uint8List(16);
-        for (var j = 0; j < block.length; j++) {
-          block[j] = _iv[j % 4];
-        }
-        newKeys.setRange(0, block.length, encrypter.encryptBytes(block, iv: iv).bytes);
-      } else {
-        newKeys.setRange(i, i + 16, encrypter.encryptBytes(newKeys.sublist(i - 16, i), iv: iv).bytes);
-      }
+    if (startIndex == 0) {
+      var block = Uint8List.fromList([..._iv, ..._iv, ..._iv, ..._iv]);
+      encrypted = aes.encrypt(block, iv: zeroIv).bytes;
+      newKeys.setRange(0, 16, encrypted);
+      startIndex += 16;
+    } else {
+      encrypted = newKeys.sublist(startIndex - 16, startIndex);
     }
+
+    for (var i = startIndex; i < size; i += 16) {
+      encrypted = aes.encrypt(encrypted, iv: zeroIv).bytes;
+      newKeys.setRange(i, i + 16, encrypted);
+    }
+
     _keys = newKeys;
   }
 }
