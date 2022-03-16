@@ -41,7 +41,7 @@ abstract class WzNumberProperty extends WzSimpleProperty {
   String GetString() => value.toString();
 
   @override
-  String toString() => value.toString();
+  String toString() => '{$name: $value}';
 }
 
 class WzShortProperty extends WzNumberProperty {
@@ -169,6 +169,9 @@ class WzNullProperty extends WzSimpleProperty {
   WzNullProperty deepClone() {
     return WzNullProperty(name);
   }
+
+  @override
+  String toString() => '{$name: null}';
 }
 
 class WzStringProperty extends WzSimpleProperty {
@@ -210,5 +213,5 @@ class WzStringProperty extends WzSimpleProperty {
   String GetString() => value;
 
   @override
-  String toString() => value;
+  String toString() => '{$name: $value}';
 }

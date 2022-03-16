@@ -45,6 +45,11 @@ abstract class WzObject implements Disposable {
 
   WzObject? operator [](String name);
   void remove();
+
+  @override
+  String toString() {
+    return name;
+  }
   //endregion
 }
 
