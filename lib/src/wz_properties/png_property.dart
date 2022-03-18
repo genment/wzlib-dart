@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
+
 import '../wz_types.dart';
 import '../wz_object.dart';
 import '../util/wz_binary_reader.dart';
@@ -11,9 +13,12 @@ class WzPngProperty extends WzImageProperty {
   int format1 = 0, format2 = 0;
 
   Uint8List? compressedImageBytes;
-  Bitmap? png;
+  late Bitmap? png;
 
-  // bool listWzUsed = false;  // todo: not sure what it is.
+  // Whether a png is a List.wz property (mostly not).
+  // A List.wz property is compressed but not encrypted,
+  // while a normal (non-List.wz) property is compressed and encrypted.
+  bool listWzUsed = false;
 
   WzBinaryReader? _reader;
 
@@ -73,7 +78,7 @@ class WzPngProperty extends WzImageProperty {
     if (len > 0) {
       if (parseNow) {
         compressedImageBytes = reader.ReadBytes(len);
-        ParsePng(true);
+        // ParsePng(true);
       }
       _reader = reader;
     }
@@ -82,155 +87,14 @@ class WzPngProperty extends WzImageProperty {
   //region Parsing Methods
 
   /// 将 wz 数据解析成 png (Bitmap) 图像，相反的过程是[CompressPng]
-  Bitmap ParsePng(
-    bool saveInMemory,
-    /*[Texture2D? texture2d ]*/
-  ) {
+  Bitmap ParsePng(    bool saveInMemory  ) {
+    // var rawBytes = _GetRawImage(saveInMemory);
     throw UnimplementedError('TODO: implement PngProperty.ParsePng()');
-    // byte[] rawBytes = _GetRawImage(saveInMemory);
-    // if (rawBytes == null) {
-    //   png = null;
-    //   return;
-    // }
-    // try {
-    //   Bitmap bmp = null;
-    //   Rectangle rect_ = new Rectangle(0, 0, width, height);
-    //
-    //   switch (Format) {
-    //     case 1:
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-    //
-    //         DecompressImage_PixelDataBgra4444(rawBytes, width, height, bmp, bmpData);
-    //         break;
-    //       }
-    //     case 2:
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-    //
-    //         Marshal.Copy(rawBytes, 0, bmpData.Scan0, rawBytes.Length);
-    //         bmp.UnlockBits(bmpData);
-    //         break;
-    //       }
-    //     case 3:
-    //       {
-    //         // New format 黑白缩略图
-    //         // thank you Elem8100, http://forum.ragezone.com/f702/wz-png-format-decode-code-1114978/
-    //         // you'll be remembered forever <3
-    //         bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-    //
-    //         DecompressImageDXT3(rawBytes, width, height, bmp, bmpData);
-    //         break;
-    //       }
-    //     case 257: // http://forum.ragezone.com/f702/wz-png-format-decode-code-1114978/index2.html#post9053713
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-    //         // "Npc.wz\\2570101.img\\info\\illustration2\\face\\0"
-    //
-    //         CopyBmpDataWithStride(rawBytes, bmp.Width * 2, bmpData);
-    //
-    //         bmp.UnlockBits(bmpData);
-    //         break;
-    //       }
-    //     case 513: // nexon wizet logo
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format16bppRgb565);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb565);
-    //
-    //         Marshal.Copy(rawBytes, 0, bmpData.Scan0, rawBytes.Length);
-    //         bmp.UnlockBits(bmpData);
-    //         break;
-    //       }
-    //     case 517:
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format16bppRgb565);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb565);
-    //
-    //         DecompressImage_PixelDataForm517(rawBytes, width, height, bmp, bmpData);
-    //         break;
-    //       }
-    //     case 1026:
-    //       {
-    //         bmp = new Bitmap(this.width, this.height, PixelFormat.Format32bppArgb);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-    //
-    //         DecompressImageDXT3(rawBytes, this.width, this.height, bmp, bmpData);
-    //         break;
-    //       }
-    //     case 2050: // new
-    //       {
-    //         bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-    //         BitmapData bmpData = bmp.LockBits(rect_, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-    //
-    //         DecompressImageDXT5(rawBytes, Width, Height, bmp, bmpData);
-    //         break;
-    //       }
-    //     default:
-    //       Helpers.ErrorLogger.Log(
-    //           Helpers.ErrorLevel.MissingFeature, string.Format("Unknown PNG format {0} {1}", format, format2));
-    //       break;
-    //   }
-    //   if (bmp != null) {
-    //     if (texture2d != null) {
-    //       Microsoft.Xna.Framework.Rectangle rect = new Microsoft.Xna.Framework.Rectangle(
-    //           Microsoft.Xna.Framework.Point.Zero,
-    //           new Microsoft.Xna.Framework.Point(width, height));
-    //       texture2d.SetData(0, 0, rect, rawBytes, 0, rawBytes.Length);
-    //     }
-    //   }
-    //
-    //   png = bmp;
-    // }
-    // catch (InvalidDataException) {
-    //   png = null;
-    // }
   }
 
   /// 将 png (Bitmap) 图像解析成 wz 数据，相反的过程是[ParsePng]
   void CompressPng(Bitmap bmp) {
     throw UnimplementedError('TODO: implement PngProperty.CompressPng()');
-    //   byte[] buf = new byte[bmp.Width * bmp.Height * 8];
-    //   format = 2;
-    //   format2 = 0;
-    //   width = bmp.Width;
-    //   height = bmp.Height;
-    //
-    //   int curPos = 0;
-    //   for (int i = 0; i < height; i++) {
-    //     for (int j = 0; j < width; j++) {
-    //       Color curPixel = bmp.GetPixel(j, i);
-    //       buf[curPos] = curPixel.B;
-    //       buf[curPos + 1] = curPixel.G;
-    //       buf[curPos + 2] = curPixel.R;
-    //       buf[curPos + 3] = curPixel.A;
-    //       curPos += 4;
-    //     }
-    //   }
-    //   compressedImageBytes = Compress(buf);
-    //
-    //   buf = null;
-    //
-    //   if (listWzUsed) {
-    //     using(MemoryStream memStream = new MemoryStream())
-    //   {
-    //   using (WzBinaryWriter writer = new WzBinaryWriter(memStream, WzTool.GetIvByMapleVersion(WzMapleVersion.GMS)))
-    //   {
-    //   writer.Write(2);
-    //   for (int i = 0; i < 2; i++)
-    //   {
-    //   writer.Write((byte)(compressedImageBytes[i] ^ writer.WzKey[i]));
-    //   }
-    //   writer.Write(compressedImageBytes.Length - 2);
-    //   for (int i = 2; i < compressedImageBytes.Length; i++)
-    //   writer.Write((byte)(compressedImageBytes[i] ^ writer.WzKey[i - 2]));
-    //   compressedImageBytes = memStream.GetBuffer();
-    //   }
-    //   }
-    // }
   }
 
   Uint8List? GetCompressedBytes(bool saveInMemory) {
@@ -261,43 +125,54 @@ class WzPngProperty extends WzImageProperty {
 
   /// 目前没有被使用，但是应该是会被 [ParsePng] 调用的？？？
   Uint8List _Decompress(Uint8List compressedBuffer, int decompressedSize) {
-    throw UnimplementedError('TODO: implement PngProperty._Decompress()');
-    // using (MemoryStream memStream = new MemoryStream())
-    // {
-    // memStream.Write(compressedBuffer, 2, compressedBuffer.Length - 2);
-    // byte[] buffer = new byte[decompressedSize];
-    // memStream.Position = 0;
-    //
-    // using (DeflateStream zip = new DeflateStream(memStream, CompressionMode.Decompress))
-    // {
-    // zip.Read(buffer, 0, buffer.Length);
-    // return buffer;
-    // }
-    // }
+    return ZLibDecoder().decodeBuffer(InputStream(compressedBuffer)..skip(2))
+        as Uint8List;
   }
 
   /// 目前被 [CompressPng] 调用，使用 zip deflate 算法压缩 png（Bitmap）数据。
   /// 并在前面插入 0x78 0x9C 两个字节，最终数据存放在 [compressedImageBytes].
   Uint8List _Compress(Uint8List decompressedBuffer) {
-    throw UnimplementedError('TODO: implement PngProperty._Compress()');
-    // using(MemoryStream memStream = new MemoryStream())
-    // {
-    // using (DeflateStream zip = new DeflateStream(memStream, CompressionMode.Compress, true))
-    // {
-    // zip.Write(decompressedBuffer, 0, decompressedBuffer.Length);
-    // }
-    // memStream.Position = 0;
-    // byte[] buffer = new byte[memStream.Length + 2];
-    // memStream.Read(buffer, 2, buffer.Length - 2);
-    //
-    // System.Buffer.BlockCopy(new byte[] { 0x78, 0x9C }, 0, buffer, 0, 2);
-    //
-    // return buffer;
-    // }
+    return ZLibEncoder().encode(decompressedBuffer,
+        output: OutputStream()..writeBytes([0x78, 0x9C])) as Uint8List;
   }
 
   Uint8List _GetRawImage(bool saveInMemory) {
-    throw UnimplementedError('TODO: implement PngProperty._GetRawImage()');
+    var rawImageBytes = GetCompressedBytes(saveInMemory);
+    
+    // var uncompressedSize = 0;
+
+    // switch (format) {
+    //   case 0x01:
+    //     uncompressedSize = width * height * 2; break;
+    //   case 0x02:
+    //     uncompressedSize = width * height * 4; break;
+    //   case 0x03:
+    //     uncompressedSize = width * height * 4; break;
+    //   case 0x101:
+    //     uncompressedSize = width * height * 2; break; 
+    //   case 0x201:
+    //     uncompressedSize = width * height * 2; break;
+    //   case 0x205:
+    //     uncompressedSize = width * height ~/ 128; break;
+    //   case 0x402:
+    //     uncompressedSize = width * height * 4; break;
+    //   case 0x802:
+    //     uncompressedSize = width * height; break;
+    //   default:
+    //     throw UnsupportedError('Unsupported format: $format, path: $fullPath');
+    // }
+
+    var input = InputStream(rawImageBytes);
+    var header = input.readUint16();
+    listWzUsed = header != 0x9C78 && header != 0xDA78 && header != 0x0178 && header != 0x5E78;
+
+    if (listWzUsed) {
+      throw UnsupportedError('Unsupported listWzUsed header: $header');
+    }
+
+    var decompressed = ZLibDecoder().decodeBuffer(input) as Uint8List;
+    input.close();
+    return decompressed;
   }
 
   //region Decoders
@@ -308,12 +183,12 @@ class WzPngProperty extends WzImageProperty {
 
   @override
   void writeValue(WzBinaryWriter writer) {
-    throw UnimplementedError('Cannot write a PngProperty');
+    throw UnsupportedError('Cannot write a PngProperty');
   }
 
   @override
   WzObject? operator [](String name) {
-    throw UnimplementedError('Invalid operation: PngProperty not supported');
+    throw UnsupportedError('Invalid operation: PngProperty not supported');
   }
 
   @override
