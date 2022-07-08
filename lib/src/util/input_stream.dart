@@ -161,7 +161,8 @@ class InputStream extends InputStreamBase {
 
   @override
   int readSByte() {
-    return buffer[offset++];
+    final b = buffer[offset++];
+    return b < 0x80 ? b : (b | 0xffffffffffffff00);
   }
 
   /// Read [count] bytes from the stream.
@@ -177,7 +178,11 @@ class InputStream extends InputStreamBase {
   int readInt16() {
     final b1 = buffer[offset++] & 0xff;
     final b2 = buffer[offset++] & 0xff;
-    return (b2 << 8) | b1;
+    if (b2 < 0x80) {
+      return (b2 << 8) | b1;
+    } else {
+      return (b2 << 8) | b1 | 0xffffffffffff0000;
+    }
   }
 
   /// Read a 16-bit word from the stream.
@@ -195,7 +200,11 @@ class InputStream extends InputStreamBase {
     final b2 = buffer[offset++] & 0xff;
     final b3 = buffer[offset++] & 0xff;
     final b4 = buffer[offset++] & 0xff;
-    return (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
+    if (b4 < 0x80) {
+      return (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
+    } else {
+      return (b4 << 24) | (b3 << 16) | (b2 << 8) | b1 | 0xffffffff00000000;
+    }
   }
 
   /// Read a 32-bit word from the stream.
@@ -230,6 +239,11 @@ class InputStream extends InputStreamBase {
   }
 
   /// Read a 64-bit word form the stream.
+  /// 
+  /// Warning:
+  /// Dart does NOT support unsigned int (64 bit) so far.
+  /// Therefore a number greater than 0x7fffffffffffffff ([b8] > 0x7f)
+  /// will be represented as negative.
   @override
   int readUint64() {
     final b1 = buffer[offset++] & 0xff;
@@ -476,7 +490,8 @@ class InputFileStream extends InputStreamBase {
 
   @override
   int readSByte() {
-    return readByte();
+    int v = readByte();
+    return v < 0x80 ? v : (v | 0xffffffffffffff00);
   }
 
   /// Read a 16-bit word from the stream.
@@ -497,7 +512,8 @@ class InputFileStream extends InputStreamBase {
 
   @override
   int readInt16() {
-    return readUint16();
+    int v = readUint16();
+    return v < 0x8000 ? v : (v | 0xffffffffffff0000);
   }
 
   /// Read a 32-bit word from the stream.
@@ -524,12 +540,23 @@ class InputFileStream extends InputStreamBase {
 
   @override
   int readInt32() {
-    return readUint32();
+    int v = readUint32();
+    return v < 0x80000000 ? v : (v | 0xffffffff00000000);
   }
 
   /// Read a 64-bit word form the stream.
+  /// 
+  /// Warning:
+  /// Dart does NOT support unsigned int (64 bit) so far.
+  /// Therefore a number greater than 0x7fffffffffffffff ([b8] > 0x7f)
+  /// will be represented as negative.
   @override
   int readUint64() {
+    return readInt64();
+  }
+
+  @override
+  int readInt64() {
     var b1 = 0;
     var b2 = 0;
     var b3 = 0;
@@ -566,11 +593,6 @@ class InputFileStream extends InputStreamBase {
         (b3 << 16) |
         (b2 << 8) |
         b1;
-  }
-
-  @override
-  int readInt64() {
-    return readUint64();
   }
 
   @override
