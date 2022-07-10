@@ -369,12 +369,13 @@ class WzFile extends WzObject {
     return wzDir[name];
   }
 
+  bool _disposed = false;
   @override
   void dispose() {
-    // TODO: 重新写所有class的dispoase
-    if (wzDir == null || wzDir.reader == null) return;
-    wzDir.reader.close();
+    if (_disposed) return;
+    wzDir.reader?.close();
     wzDir.dispose();
+    _disposed = true;
   }
 
   @override

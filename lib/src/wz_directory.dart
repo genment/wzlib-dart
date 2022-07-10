@@ -16,9 +16,8 @@ class WzDirectory extends WzObject {
   List<WzDirectory> wzDirectories = [];
   List<WzImage> wzImages = [];
 
-  final WzBinaryReader? _reader;
+  WzBinaryReader? reader;
 
-  WzBinaryReader get reader => _reader!;
   Uint8List? wzIv;
 
   int offset = 0;
@@ -38,7 +37,7 @@ class WzDirectory extends WzObject {
 
   //region Constructor
 
-  WzDirectory(String name, this.wzFile, [this._reader, this.hash = 0, this.wzIv]) : super(name) {
+  WzDirectory(String name, this.wzFile, [this.reader, this.hash = 0, this.wzIv]) : super(name) {
     hash = hash == 0 ? wzFile.versionHash : hash;
     wzIv = wzIv ?? wzFile.wzIv;
   }
@@ -47,18 +46,19 @@ class WzDirectory extends WzObject {
 
   //region Methods
   void ParseDirectory() {
-    if (_reader == null) throw ArgumentError.notNull('reader');
+    if (reader == null) throw ArgumentError.notNull('reader');
+    final _reader = reader!;
 
-    var available = reader.available();
+    var available = _reader.available();
     if (available == 0) return;
 
-    var entryCount = reader.readCompressedInt();
+    var entryCount = _reader.readCompressedInt();
     if (entryCount < 0 || entryCount > 100000) {
       // probably nothing > 100k folders for now.
       throw Exception('Invalid wz version used for decryption, try parsing other version numbers.');
     }
     for (var i = 0; i < entryCount; i++) {
-      var type = reader.ReadByte();
+      var type = _reader.ReadByte();
       String fname;
       int fsize;
       int checksum;
@@ -68,25 +68,25 @@ class WzDirectory extends WzObject {
       switch (type) {
         case 1: //01 XX 00 00 00 00 00 OFFSET (4 bytes)
           {
-            reader.ReadInt32(); // unknown
-            reader.ReadInt16();
-            var offs = reader.ReadOffset();
+            _reader.ReadInt32(); // unknown
+            _reader.ReadInt16();
+            var offs = _reader.ReadOffset();
             continue;
           }
         case 2:
           {
-            var stringOffset = reader.ReadInt32();
-            rememberPos = reader.position;
-            reader.position = reader.Header.fstart + stringOffset;
-            type = reader.ReadByte();
-            fname = reader.ReadString();
+            var stringOffset = _reader.ReadInt32();
+            rememberPos = _reader.position;
+            _reader.position = _reader.Header.fstart + stringOffset;
+            type = _reader.ReadByte();
+            fname = _reader.ReadString();
             break;
           }
         case 3:
         case 4:
           {
-            fname = reader.ReadString();
-            rememberPos = reader.position;
+            fname = _reader.ReadString();
+            rememberPos = _reader.position;
             break;
           }
         default:
@@ -94,19 +94,19 @@ class WzDirectory extends WzObject {
             throw Exception('[WzDirectory] Unknown directory. type = $type');
           }
       }
-      reader.position = rememberPos;
-      fsize = reader.readCompressedInt();
-      checksum = reader.readCompressedInt();
-      offset = reader.ReadOffset();
+      _reader.position = rememberPos;
+      fsize = _reader.readCompressedInt();
+      checksum = _reader.readCompressedInt();
+      offset = _reader.ReadOffset();
 
       if (type == 3) {
-        wzDirectories.add(WzDirectory(fname, wzFile, reader, hash, wzIv)
+        wzDirectories.add(WzDirectory(fname, wzFile, _reader, hash, wzIv)
           ..blockSize = fsize
           ..checksum = checksum
           ..offset = offset
           ..parent = this);
       } else {
-        wzImages.add(WzImage(fname, reader, checksum)
+        wzImages.add(WzImage(fname, _reader, checksum)
           ..blockSize = fsize
           ..offset = offset
           ..parent = this);
@@ -118,7 +118,7 @@ class WzDirectory extends WzObject {
       // see: commit 63e2d72a
       // [MapleLib] Fixed a parsing issue with the new KMS Base.wz without WzImage
 
-      reader.position = subdir.offset;
+      _reader.position = subdir.offset;
       subdir.ParseDirectory();
     }
   }
@@ -276,15 +276,18 @@ class WzDirectory extends WzObject {
 
   /// Parses the wz images
   void ParseImages() {
+    if (reader == null) throw ArgumentError.notNull('reader');
+    final _reader = reader!;
+  
     for (var img in wzImages) {
-      if (reader.position != img.offset) {
-        reader.position = img.offset;
+      if (_reader.position != img.offset) {
+        _reader.position = img.offset;
       }
       img.ParseImage();
     }
     for (var subdir in wzDirectories) {
-      if (reader.position != subdir.offset) {
-        reader.position = subdir.offset;
+      if (_reader.position != subdir.offset) {
+        _reader.position = subdir.offset;
       }
       subdir.ParseImages();
     }
@@ -371,7 +374,7 @@ class WzDirectory extends WzObject {
       dir.dispose();
     }
     wzImages.clear();
-    wzImages.clear();
+    wzDirectories.clear();
   }
 
   @override
