@@ -10,6 +10,7 @@ import 'wz_object.dart';
 import 'wz_directory.dart';
 import 'crypto/wz_keys.dart';
 import 'util/wz_tool.dart';
+import 'util/output_stream.dart';
 import 'util/wz_binary_reader.dart';
 import 'util/wz_binary_writer.dart';
 
@@ -53,9 +54,9 @@ class WzFile extends WzObject {
 
   /// Create a new WzFile Object
   WzFile.createNew(this.Version, this.mapleLocalVersion) {
+    wzIv = WzTool.GetIvByMapleVersion(mapleLocalVersion);
     wzDir = WzDirectory(name, this);
     header = WzHeader();
-    wzIv = WzTool.GetIvByMapleVersion(mapleLocalVersion);
   }
 
   /// Open a wz file from a file on the disk
@@ -319,7 +320,7 @@ class WzFile extends WzObject {
 
     WzTool.StringCache.clear();
 
-    var wzWriter = WzBinaryWriter(File(path).openSync(mode: FileMode.write), wzIv);
+    var wzWriter = WzBinaryWriter(OutputFileStream(path), wzIv);
 
     wzWriter.Hash = versionHash;
 

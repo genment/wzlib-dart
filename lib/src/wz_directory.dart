@@ -6,6 +6,7 @@ import 'wz_object.dart';
 import 'wz_file.dart';
 import 'wz_image.dart';
 
+import 'util/output_stream.dart';
 import 'util/wz_tool.dart';
 import 'util/wz_binary_reader.dart';
 import 'util/wz_binary_writer.dart';
@@ -165,21 +166,14 @@ class WzDirectory extends WzObject {
           !bIsWzUserKeyDefault || //  everything needs to be re-written when a custom UserKey is used too
           img.changed) // or when an image is changed
       {
-        // TODO: ahhhhhh!
-
-        //     using(MemoryStream memStream = new MemoryStream())
-        // {
-        // using (WzBinaryWriter imgWriter = new WzBinaryWriter(memStream, useCustomIv ? useIv : this.WzIv))
-        // {
-        // img.SaveImage(imgWriter, bIsWzUserKeyDefault, useCustomIv);
-        //
-        // img.CalculateAndSetImageChecksum(memStream.ToArray()); // checksum
-        //
-        // img.tempFileStart = prevOpenedStream.Position;
-        // prevOpenedStream.Write(memStream.ToArray(), 0, (int)memStream.Length);
-        // img.tempFileEnd = prevOpenedStream.Position;
-        // }
-        // }
+        var imgWriter = WzBinaryWriter(OutputStream(), useCustomIv ? useIv : wzIv!);
+        img.SaveImage(imgWriter, bIsWzUserKeyDefault, useCustomIv);
+        var imgBytes = imgWriter.getBytes();
+        img.CalculateAndSetImageChecksum(imgBytes);
+        img.tempFileStart = prevOpenedStream.positionSync();
+        prevOpenedStream.writeFromSync(imgBytes);
+        img.tempFileEnd = prevOpenedStream.positionSync();
+        // imgWriter.close();
       } else {
         img.tempFileStart = img.offset;
         img.tempFileEnd = img.offset + img.blockSize;
