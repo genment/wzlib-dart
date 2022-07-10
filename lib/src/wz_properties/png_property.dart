@@ -1,12 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:archive/archive.dart';
-
-import '../wz_types.dart';
-import '../wz_object.dart';
-import '../util/wz_binary_reader.dart';
-import '../util/wz_binary_writer.dart';
-import 'base_property.dart';
+part of wzlib;
 
 class WzPngProperty extends WzImageProperty {
   int width = 0, height = 0;
@@ -125,15 +117,15 @@ class WzPngProperty extends WzImageProperty {
 
   /// 目前没有被使用，但是应该是会被 [ParsePng] 调用的？？？
   Uint8List _Decompress(Uint8List compressedBuffer, int decompressedSize) {
-    return ZLibDecoder().decodeBuffer(InputStream(compressedBuffer)..skip(2))
+    return archive.ZLibDecoder().decodeBuffer(archive.InputStream(compressedBuffer)..skip(2))
         as Uint8List;
   }
 
   /// 目前被 [CompressPng] 调用，使用 zip deflate 算法压缩 png（Bitmap）数据。
   /// 并在前面插入 0x78 0x9C 两个字节，最终数据存放在 [compressedImageBytes].
   Uint8List _Compress(Uint8List decompressedBuffer) {
-    return ZLibEncoder().encode(decompressedBuffer,
-        output: OutputStream()..writeBytes([0x78, 0x9C])) as Uint8List;
+    return archive.ZLibEncoder().encode(decompressedBuffer,
+        output: archive.OutputStream()..writeBytes([0x78, 0x9C])) as Uint8List;
   }
 
   Uint8List _GetRawImage(bool saveInMemory) {
@@ -162,7 +154,7 @@ class WzPngProperty extends WzImageProperty {
     //     throw UnsupportedError('Unsupported format: $format, path: $fullPath');
     // }
 
-    var input = InputStream(rawImageBytes);
+    var input = archive.InputStream(rawImageBytes);
     var header = input.readUint16();
     listWzUsed = header != 0x9C78 && header != 0xDA78 && header != 0x0178 && header != 0x5E78;
 
@@ -170,7 +162,7 @@ class WzPngProperty extends WzImageProperty {
       throw UnsupportedError('Unsupported listWzUsed header: $header');
     }
 
-    var decompressed = ZLibDecoder().decodeBuffer(input) as Uint8List;
+    var decompressed = archive.ZLibDecoder().decodeBuffer(input) as Uint8List;
     input.close();
     return decompressed;
   }

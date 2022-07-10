@@ -1,16 +1,4 @@
-import 'dart:developer';
-import 'dart:typed_data';
-
-import 'package:characters/characters.dart';
-
-import 'wz_types.dart';
-import 'wz_object.dart';
-import 'wz_file.dart';
-import 'wz_directory.dart';
-import 'util/wz_binary_reader.dart';
-import 'util/wz_binary_writer.dart';
-import 'wz_properties/base_property.dart';
-import 'wz_properties/extended_property.dart';
+part of wzlib;
 
 class WzImage extends WzObject with PropertyContainer {
   //region Fields
@@ -155,7 +143,7 @@ class WzImage extends WzObject with PropertyContainer {
       default:
         {
           // todo: log this or warn.
-          log('[WzImage] New Wz image header found. b = $b', time: DateTime.now());
+          // log('[WzImage] New Wz image header found. b = $b', time: DateTime.now());
           // Helpers.ErrorLogger.Log(Helpers.ErrorLevel.MissingFeature, "[WzImage] New Wz image header found. b = " + b);
           return false;
         }

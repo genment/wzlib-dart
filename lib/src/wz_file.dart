@@ -1,18 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:collection/collection.dart';
-// import 'package:logger/logger.dart';
-import 'package:path/path.dart' as p;
-
-import 'wz_types.dart';
-import 'wz_object.dart';
-import 'wz_directory.dart';
-import 'crypto/wz_keys.dart';
-import 'util/wz_tool.dart';
-import 'util/output_stream.dart';
-import 'util/wz_binary_reader.dart';
-import 'util/wz_binary_writer.dart';
+part of wzlib;
 
 class WzFile extends WzObject {
   // var logger = Logger(output: MultiOutput([ConsoleOutput(), StreamOutput()]));

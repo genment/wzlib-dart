@@ -1,11 +1,4 @@
-import 'dart:collection';
-import 'dart:typed_data';
-
-import 'output_stream.dart';
-import 'wz_tool.dart';
-
-import '../wz_file.dart';
-import '../crypto/wz_keys.dart';
+part of util;
 
 class WzBinaryWriter extends _BinaryWriterBase {
   late WzMutableKey WzKey;

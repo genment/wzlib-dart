@@ -1,7 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'input_stream.dart';
+part of util;
 
 abstract class OutputStreamBase {
 

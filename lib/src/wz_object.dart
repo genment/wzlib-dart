@@ -1,5 +1,4 @@
-import 'wz_types.dart';
-import 'wz_file.dart';
+part of wzlib;
 
 abstract class WzObject implements Disposable {
 

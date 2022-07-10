@@ -1,11 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'wz_tool.dart';
-
-import '../wz_file.dart';
-import '../crypto/wz_keys.dart';
+part of util;
 
 class WzBinaryReader extends _BinaryReader {
   late WzMutableKey WzKey;

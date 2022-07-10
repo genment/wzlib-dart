@@ -1,15 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'wz_types.dart';
-import 'wz_object.dart';
-import 'wz_file.dart';
-import 'wz_image.dart';
-
-import 'util/output_stream.dart';
-import 'util/wz_tool.dart';
-import 'util/wz_binary_reader.dart';
-import 'util/wz_binary_writer.dart';
+part of wzlib;
 
 class WzDirectory extends WzObject {
   //region Fields

@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:wzlib/src/util/input_stream.dart';
+import 'package:wzlib/src/util/util.dart';
 
 void main() {
   group("test inputStream", () {

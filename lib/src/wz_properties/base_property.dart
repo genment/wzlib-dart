@@ -1,14 +1,4 @@
-import '../wz_types.dart';
-import '../wz_object.dart';
-import '../wz_file.dart';
-import '../wz_image.dart';
-import '../util/wz_binary_reader.dart';
-import '../util/wz_binary_writer.dart';
-
-import 'simple_property.dart';
-import 'extended_property.dart';
-import 'png_property.dart';
-import 'lua_property.dart';
+part of wzlib;
 
 /// [WzImageProperty] represents a data structure that stores inside an *.img Image.
 ///
@@ -18,14 +8,14 @@ import 'lua_property.dart';
 /// [WzFloatProperty], [WzDoubleProperty], [WzStringProperty]
 /// and [WzNullProperty].
 ///
-/// (2) [WzExtendedProperty]s are:
+/// (2) [WzExtended]s are:
 /// [WzSoundProperty], [WzCanvasProperty], [WzConvexProperty],
 /// [WzSubProperty], [WzUOLProperty] and [WzVectorProperty],
 ///
 /// and three ([WzCanvasProperty], [WzConvexProperty] and [WzSubProperty])
 /// of which are also [PropertyContainer].
 ///
-/// Both [WzExtendedProperty] and [PropertyContainer] can hold other properties.
+/// Both [WzExtended] and [PropertyContainer] can hold other properties.
 ///
 /// (3) Others are:
 /// [WzPngProperty] and [WzLuaProperty]
@@ -130,7 +120,7 @@ abstract class WzImageProperty extends WzObject {
     for (var i = 0; i < entryCount; i++) {
       var name = reader.ReadStringBlock(offset);
       var ptype = reader.ReadByte();
-      print('name = $name, ptype = $ptype');
+
       switch (ptype) // header value
           {
         case 0:

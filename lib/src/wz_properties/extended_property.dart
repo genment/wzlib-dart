@@ -1,20 +1,4 @@
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:characters/characters.dart';
-
-import '../wz_types.dart';
-import '../wz_object.dart';
-import '../wz_directory.dart';
-import '../wz_image.dart';
-import '../util/wz_binary_reader.dart';
-import '../util/wz_binary_writer.dart';
-
-import 'base_property.dart';
-import 'simple_property.dart';
-import 'png_property.dart';
-import 'lua_property.dart';
-
+part of wzlib;
 
 ///////////////////////////////////////////////////////////
 ///                 WzExtendedProperty                  ///

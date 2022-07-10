@@ -1,15 +1,34 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library wzlib;
 
-export 'src/wz_types.dart' show WzMapleVersion, WzObjectType, WzPropertyType;
+/// Built-ins
 
-export 'src/wz_object.dart' show WzObject;
-export 'src/wz_file.dart' show WzFile, WzHeader;
-export 'src/wz_directory.dart' show WzDirectory;
-export 'src/wz_image.dart' show WzImage;
+import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
-export 'src/wz_properties/base_property.dart' show WzImageProperty;
-export 'src/wz_properties/simple_property.dart' hide WzSimpleProperty, WzNumberProperty;
-export 'src/wz_properties/extended_property.dart' hide WzExtended, PropertyContainer;
+/// Third-parties
+
+import 'package:archive/archive.dart' as archive;
+import 'package:characters/characters.dart';
+import 'package:collection/collection.dart';
+import 'package:path/path.dart' as p;
+
+/// Externals
+
+import 'src/crypto/wz_keys.dart';
+import 'src/util/util.dart';
+
+/// Parts
+
+part 'src/wz_types.dart';
+
+part 'src/wz_object.dart';
+part 'src/wz_file.dart';
+part 'src/wz_directory.dart';
+part 'src/wz_image.dart';
+
+part 'src/wz_properties/base_property.dart';
+part 'src/wz_properties/simple_property.dart';
+part 'src/wz_properties/extended_property.dart';
+part 'src/wz_properties/png_property.dart';
+part 'src/wz_properties/lua_property.dart';

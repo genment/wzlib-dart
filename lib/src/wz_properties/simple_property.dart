@@ -1,7 +1,4 @@
-import '../wz_types.dart';
-import '../util/wz_binary_writer.dart';
-import '../wz_object.dart';
-import 'base_property.dart';
+part of wzlib;
 
 abstract class WzSimpleProperty extends WzImageProperty {
   WzSimpleProperty(String name, [Object? value, WzObject? parent]) : super(name, value, parent);

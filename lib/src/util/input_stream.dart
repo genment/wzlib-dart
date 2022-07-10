@@ -1,7 +1,4 @@
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
-
+part of util;
 abstract class InputStreamBase {
   /// How many bytes are left in the stream.
   int get length;

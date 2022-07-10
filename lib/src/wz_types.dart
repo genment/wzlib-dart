@@ -1,3 +1,5 @@
+part of wzlib;
+
 enum WzMapleVersion{
   GMS,
   EMS,

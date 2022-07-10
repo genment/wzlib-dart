@@ -1,10 +1,4 @@
-import 'dart:typed_data';
-
-import '../wz_types.dart';
-import '../wz_object.dart';
-import '../crypto/wz_keys.dart';
-import '../util/wz_binary_writer.dart';
-import 'base_property.dart';
+part of wzlib;
 
 class WzLuaProperty extends WzImageProperty {
   //#region Fields
