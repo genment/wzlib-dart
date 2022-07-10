@@ -54,6 +54,9 @@ class WzImage extends WzObject with PropertyContainer {
   WzImage(String name, [this._reader, this.checksum = 0]) : super(name) {
     if (_reader != null) {
       blockStart = _reader!.position;
+    } else {
+      // if reader not provided, that means this WzImage is new created and could be saved with changes later.
+      changed = true;
     }
   }
 
