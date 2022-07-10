@@ -1,15 +1,7 @@
-import 'package:wzlib/wzlib.dart';
-import 'package:test/test.dart';
+import 'iostream_test.dart' as iostream_test;
+import 'wzfile_read_write_test.dart' as wzfile_rw_test;
 
 void main() {
-  group('A group of tests', () {
-
-    setUp(() {
-      // Additional setup goes here.
-    });
-
-    test('First Test', () {
-      expect(1 + 1 == 2, isTrue);
-    });
-  });
+  iostream_test.main();
+  wzfile_rw_test.main();
 }
