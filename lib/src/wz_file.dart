@@ -269,14 +269,15 @@ class WzFile extends WzObject {
   /// </summary>[
   void _CreateWZVersionHash() {
     versionHash = 0;
-    for (var ch in Version.toString().codeUnits) {
+    for (final ch in Version.toString().codeUnits) {
       versionHash = (versionHash * 32) + ch + 1;
     }
-    var a = (versionHash >> 24) & 0xFF,
-        b = (versionHash >> 16) & 0xFF,
-        c = (versionHash >> 8) & 0xFF,
-        d = versionHash & 0xFF;
+    final a = (versionHash >> 24),
+        b = (versionHash >> 16),
+        c = (versionHash >> 8),
+        d = versionHash;
     wzVersionHeader = ~(a ^ b ^ c ^ d);
+    wzVersionHeader &= 0xff;  // keep the LSB (8 bits)
   }
 
   /// Saves a wz file to the disk, AKA repacking.
