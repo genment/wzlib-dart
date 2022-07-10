@@ -132,23 +132,6 @@ class WzBinaryWriter extends _BinaryWriterBase {
     WriteUint32(writeOffset);
   }
 
-  /// <summary>
-  /// The amount of bytes available remaining in the stream
-  /// </summary>
-  /// <returns></returns>
-  int available() {
-    return _file.lengthSync() - position;
-  }
-
-  Uint16List EncryptString(String stringToDecrypt) {
-    throw UnimplementedError('WzListFile');
-    var outputChars = Uint16List(stringToDecrypt.length);
-    var chars = stringToDecrypt.codeUnits;
-    for (var i = 0; i < chars.length; i++) {
-      outputChars[i] = chars[i] ^ ((WzKey[i * 2 + 1] << 8) + WzKey[i * 2]);
-    }
-    return outputChars;
-  }
 }
 
 class _BinaryWriterBase {

@@ -245,20 +245,6 @@ abstract class WzImageProperty extends WzObject {
     writer.position = newPos;
   }
 
-  static void WriteExtendedValue(WzBinaryWriter writer, WzExtended property) {
-    writer.WriteByte(9);
-
-    var beforePos = writer.position;
-    writer.WriteInt32(0); // Placeholder
-    property.writeValue(writer);
-
-    var len = writer.position - beforePos;
-    var newPos = writer.position;
-    writer.position = beforePos;
-    writer.WriteInt32(len - 4);
-    writer.position = newPos;
-  }
-
   //#endregion
 
   //#region Custom Members
