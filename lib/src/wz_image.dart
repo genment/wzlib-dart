@@ -3,11 +3,6 @@ part of wzlib;
 class WzImage extends WzObject with PropertyContainer {
   //region Fields
 
-  /// Do **NOT** use this!!! Use [wzProperties] instead!!!
-  ///
-  /// [wzProperties] guarantees that [WzImage] is parsed before use.
-  final List<WzImageProperty> _properties = [];
-
   @override
   List<WzImageProperty> get wzProperties {
     if (_reader != null && !parsed) {
