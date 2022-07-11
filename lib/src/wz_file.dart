@@ -76,7 +76,7 @@ class WzFile extends WzObject {
   ///
   /// If a different [wzIv] is given, update and use the new [wzIv],
   /// else use the existing one.
-  bool ParseWzFile(Uint8List? wzIv) {
+  bool ParseWzFile([Uint8List? wzIv]) {
     if (wzIv != null) {
       this.wzIv = wzIv;
     }
