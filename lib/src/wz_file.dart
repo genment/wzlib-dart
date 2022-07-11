@@ -89,7 +89,7 @@ class WzFile extends WzObject {
       return false;
     }
 
-    var reader = WzBinaryReader(File(filePath!).openSync(), wzIv);
+    var reader = WzBinaryReader(InputFileStream(filePath!), wzIv);
 
     header.ident = reader.ReadPlainString(4);
     header.fsize = reader.ReadUInt64();

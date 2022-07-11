@@ -1,11 +1,11 @@
 part of util;
 
-class WzBinaryReader extends _BinaryReader {
+class WzBinaryReader extends _BinaryReaderBase {
   late WzMutableKey WzKey;
   late int Hash;
   late WzHeader Header;
 
-  WzBinaryReader(RandomAccessFile raf, Uint8List wzIv) : super(raf) {
+  WzBinaryReader(super._stream, Uint8List wzIv) {
     WzKey = WzKeyGenerator.generateWzKey(wzIv);
     Hash = 0; //TODO: should not???
     Header = WzHeader(); //TODO: should not???
@@ -95,7 +95,7 @@ class WzBinaryReader extends _BinaryReader {
   /// </summary>
   /// <returns></returns>
   int available() {
-    return _file.lengthSync() - position;
+    return _stream.length - position;
   }
 
   int ReadOffset() {
@@ -134,77 +134,55 @@ class WzBinaryReader extends _BinaryReader {
   }
 }
 
-abstract class _BinaryReader {
-  final RandomAccessFile _file;
-  final Endian _endian = Endian.little;
+abstract class _BinaryReaderBase {
+  final InputStreamBase _stream;
 
-  // BinaryReader(Stream input);
-  // BinaryReader(Stream input, Encoding encoding);
-  // BinaryReader(Stream input, Encoding encoding, bool leaveOpen);
-  //  Stream BaseStream { get; }
-  //  void Close();
-  //  void Dispose(bool disposing);
-  //  void Dispose();
+  int get position => _stream.position;
 
-  int get position => _file.positionSync();
+  set position(int p) => _stream.position = p;
 
-  set position(int p) => _file.setPositionSync(p);
-
-  _BinaryReader(this._file);
+  _BinaryReaderBase(this._stream);
 
   int peekChar() {
-    var p = _file.positionSync();
-    var c = _file.readByteSync();
-    _file.setPositionSync(p);
+    var p = _stream.position;
+    var c = _stream.readByte();
+    _stream.position = p;
     return c;
   }
 
-  bool readBoolean() => _file.readByteSync() != 0;
+  bool readBoolean() => _stream.readBoolean();
 
-  int ReadByte() => _readByteData1().getUint8(0);
+  int ReadByte() => _stream.readByte();
 
-  int ReadSByte() => _readByteData1().getInt8(0);
+  int ReadSByte() => _stream.readSByte();
 
-  int ReadInt16() => _readByteData2().getInt16(0, _endian);
+  int ReadInt16() => _stream.readInt16();
 
-  int ReadUInt16() => _readByteData2().getUint16(0, _endian);
+  int ReadUInt16() =>_stream.readUint16();
 
-  int ReadInt32() => _readByteData4().getInt32(0, _endian);
+  int ReadInt32() => _stream.readInt32();
 
-  int ReadUInt32() => _readByteData4().getUint32(0, _endian);
+  int ReadUInt32() => _stream.readUint32();
 
-  int ReadInt64() => _readByteData8().getInt64(0, _endian);
+  int ReadInt64() => _stream.readInt64();
 
-  int ReadUInt64() => _readByteData8().getUint64(0, _endian);
+  int ReadUInt64() => _stream.readUint64();
 
-  double ReadSingle() => _readByteData4().getFloat32(0, _endian);
+  double ReadSingle() => _stream.readFloat32();
 
-  double ReadDouble() => _readByteData8().getFloat64(0, _endian);
+  double ReadDouble() => _stream.readFloat64();
 
-  Uint8List ReadBytes(int count) => _file.readSync(count);
+  Uint8List ReadBytes(int count) => _stream.readBytes(count).toUint8List();
 
-  int Read(Uint8List buffer, int index, int count) {
-    return _file.readIntoSync(buffer, index, index + count);
-  }
+  // int Read(Uint8List buffer, int index, int count) {
+  //   return _stream.readIntoSync(buffer, index, index + count);
+  // }
 
   String ReadString();
 
-  ByteData _readByteData1() => _file.readSync(1).buffer.asByteData();
-
-  ByteData _readByteData2() => _file.readSync(2).buffer.asByteData();
-
-  ByteData _readByteData4() => _file.readSync(4).buffer.asByteData();
-
-  ByteData _readByteData8() => _file.readSync(8).buffer.asByteData();
-
-  void skipBytes([int skipCount = 1]) => _file.readSync(skipCount);
+  void skipBytes([int skipCount = 1]) => _stream.skip(skipCount);
 
   void close() {
-    _file.closeSync();
+    _stream.close();
   }
-// int read();
-// int read(char[] buffer, int index, int count);
-// char readChar();
-// char[] readChars(int count);
-// decimal readDecimal();
 }
