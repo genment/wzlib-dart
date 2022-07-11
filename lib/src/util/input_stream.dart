@@ -414,7 +414,7 @@ class InputFileStream extends InputStreamBase {
     // Also, make sure it's at least 8 bytes, so reading a 64-bit value doesn't
     // have to deal with buffer overflow.
     bufferSize = max(min(bufferSize, _fileSize), 8);
-    _buffer = Uint8List(min(bufferSize, 8));
+    _buffer = Uint8List(bufferSize);
     _readBuffer();
   }
 
