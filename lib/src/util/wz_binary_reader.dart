@@ -42,8 +42,8 @@ class WzBinaryReader extends _BinaryReaderBase {
         var encryptedChar = ReadUInt16();
         encryptedChar ^= mask;
         encryptedChar ^= (WzKey[i * 2 + 1] << 8) + WzKey[i * 2];
-        retString.writeCharCode(encryptedChar); // TODO: check if OK
-        mask++;
+        retString.writeCharCode(encryptedChar);
+        mask = (++mask) & 0xFFFF;
       }
     } else {
       // ASCII
@@ -55,8 +55,8 @@ class WzBinaryReader extends _BinaryReaderBase {
         var encryptedChar = ReadByte();
         encryptedChar ^= mask;
         encryptedChar ^= WzKey[i];
-        retString.writeCharCode(encryptedChar); // TODO: check if OK
-        mask++;
+        retString.writeCharCode(encryptedChar);
+        mask = (++mask) & 0xFF;
       }
     }
     return retString.toString();

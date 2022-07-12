@@ -74,7 +74,7 @@ class WzBinaryWriter extends _BinaryWriterBase {
         var encryptedChar = chars[i];
         encryptedChar ^= (WzKey[i * 2 + 1] << 8) + WzKey[i * 2];
         encryptedChar ^= mask;
-        mask++;
+        mask = (++mask) & 0xFFFF;
         WriteUint16(encryptedChar);
       }
     } else {
@@ -93,7 +93,7 @@ class WzBinaryWriter extends _BinaryWriterBase {
         var encryptedChar = chars[i];
         encryptedChar ^= WzKey[i];
         encryptedChar ^= mask;
-        mask++;
+        mask = (++mask) & 0xFF;
         WriteByte(encryptedChar);
       }
     }
