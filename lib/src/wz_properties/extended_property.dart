@@ -255,6 +255,10 @@ class WzVectorProperty extends WzExtended {
   WzIntProperty y = WzIntProperty('Y');
 
   Point get point => Point(x.value, y.value);
+  set point(Point p) {
+    x.value = p.x;
+    y.value = p.y;
+  }
 
   @override
   Point get wzValue => point;
