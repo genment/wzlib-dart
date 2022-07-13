@@ -191,8 +191,8 @@ class WzPngProperty extends WzImageProperty {
   @override
   void dispose() {
     // todo: check if png nullable
-    // compressedImageBytes.clear();
-    png?.dispose();
+    compressedImageBytes = null;
+    // png?.dispose();
   }
 }
 
