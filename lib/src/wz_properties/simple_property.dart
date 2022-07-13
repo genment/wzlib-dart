@@ -4,14 +4,16 @@ abstract class WzSimpleProperty extends WzImageProperty {
   WzSimpleProperty(String name, [Object? value, WzObject? parent]) : super(name, value, parent);
 
   @override
-  WzObject? operator [](String name) => throw UnimplementedError('WzSimpleProperty Not supported');
+  WzObject? operator [](String name) => throw UnsupportedError('WzSimpleProperty Not supported');
 
   @override
-  List<WzImageProperty> get wzProperties => throw UnimplementedError('WzSimpleProperty Not supported');
+  List<WzImageProperty> get wzProperties => throw UnsupportedError('WzSimpleProperty Not supported');
 
   /// Nothing to dispose
   @override
-  void dispose() {}
+  void dispose() {
+    parent = null;
+  }
 }
 
 abstract class WzNumberProperty extends WzSimpleProperty {
