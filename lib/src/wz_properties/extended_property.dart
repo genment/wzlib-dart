@@ -470,6 +470,7 @@ class WzCanvasProperty extends WzExtended with PropertyContainer {
   void operator []=(String name, WzImageProperty prop) {
     if (name == 'PNG' && prop is WzPngProperty) {
       pngProperty = prop;
+      return;
     }
     super[name] = prop;
   }
