@@ -300,7 +300,7 @@ class WzFile extends WzObject {
     wzDir.SetVersionHash(versionHash);
 
     // this .TEMP file will contain everything except Header
-    var tempFile = File(p.basenameWithoutExtension(path) + '.TEMP');
+    var tempFile = File(path + '.TEMP');
     var raFile = tempFile.openSync(mode: FileMode.write); // replace with or create a new empty file
     wzDir.GenerateDataFile(bIsWzIvSimilar ? null : wzIv, bIsWzUserKeyDefault, raFile);
     raFile.closeSync(); // must close
