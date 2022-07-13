@@ -67,7 +67,8 @@ abstract class InputStreamBase {
 
   Uint8List toUint8List();
 
-  void close() {}
+  Future<void> close();
+  void closeSync();
 }
 
 /// A buffer that can be read as a stream of bytes
@@ -332,7 +333,13 @@ class InputStream extends InputStreamBase {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
+    buffer = <int>[];
+    _length = 0;
+  }
+
+  @override
+  void closeSync() {
     buffer = <int>[];
     _length = 0;
   }
@@ -366,13 +373,24 @@ class FileHandle {
 
   bool get isOpen => _file != null;
 
-  void close() {
+  Future<void> close() async {
     if (_file == null) {
       return;
     }
-    _file!.close();
+    var fp = _file;
     _file = null;
     _position = 0;
+    await fp!.close();
+  }
+
+  void closeSync() {
+    if (_file == null) {
+      return;
+    }
+    var fp = _file;
+    _file = null;
+    _position = 0;
+    fp!.closeSync();
   }
 
   void open() {
@@ -706,8 +724,15 @@ class InputFileStream extends InputStreamBase {
   }
 
   @override
-  void close() {
-    _file.close();
+  Future<void> close() async {
+    await _file.close();
+    _fileSize = 0;
+    _position = 0;
+  }
+
+  @override
+  void closeSync() {
+    _file.closeSync();
     _fileSize = 0;
     _position = 0;
   }

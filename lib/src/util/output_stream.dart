@@ -59,7 +59,8 @@ abstract class OutputStreamBase {
   /// Subset of bytes in the stream
   Uint8List subset(int start, [int? end]);
 
-  void close() {}
+  Future<void> close() async {}
+  void closeSync() {}
 }
 
 // always Little-Endian
@@ -314,13 +315,24 @@ class _FileHandle {
     _position = 0;
   }
 
-  void close() {
+  Future<void> close() async {
     if (_file == null) {
       return;
     }
-    _file!.close();
+    var fp = _file;
     _file = null;
     _position = 0;
+    await fp!.close();
+  }
+
+  void closeSync() {
+    if (_file == null) {
+      return;
+    }
+    var fp = _file;
+    _file = null;
+    _position = 0;
+    fp!.closeSync();
   }
 
   int readInto(List<int> buffer, [int? end]) {
@@ -399,12 +411,22 @@ class OutputFileStream extends OutputStreamBase {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     if (!_file.isOpen) {
       return;
     }
     flush();
-    _file.close();
+    await _file.close();
+    _position = 0;
+  }
+
+  @override
+  void closeSync() {
+    if (!_file.isOpen) {
+      return;
+    }
+    flush();
+    _file.closeSync();
     _position = 0;
   }
 
