@@ -27,7 +27,8 @@ class WzDirectory extends WzObject {
 
   //region Constructor
 
-  WzDirectory(String name, this.wzFile, [this.reader, this.hash = 0, this.wzIv]) : super(name) {
+  WzDirectory(String name, this.wzFile, [this.reader, this.hash = 0, this.wzIv])
+      : super(name) {
     hash = hash == 0 ? wzFile.versionHash : hash;
     wzIv = wzIv ?? wzFile.wzIv;
   }
@@ -123,7 +124,8 @@ class WzDirectory extends WzObject {
       } else {
         // read from original .wz file
         img.reader.position = img.tempFileStart;
-        wzWriter.WriteBytes(img.reader.ReadBytes(img.tempFileEnd - img.tempFileStart));
+        var buffer = img.reader.ReadBytes(img.tempFileEnd - img.tempFileStart);
+        wzWriter.WriteBytes(buffer);
       }
     }
     for (var dir in wzDirectories) {
@@ -260,7 +262,7 @@ class WzDirectory extends WzObject {
   void ParseImages() {
     if (reader == null) throw ArgumentError.notNull('reader');
     final _reader = reader!;
-  
+
     for (var img in wzImages) {
       if (_reader.position != img.offset) {
         _reader.position = img.offset;

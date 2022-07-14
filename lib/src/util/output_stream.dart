@@ -78,7 +78,7 @@ class OutputStream extends OutputStreamBase {
       : _buffer = buffer ?? Uint8List(size ?? _blockSize);
 
   bool get isEOS => position >= _length;
-  
+
   @override
   void flush() {}
 
@@ -97,7 +97,7 @@ class OutputStream extends OutputStreamBase {
   void reset() {
     position = _length = 0;
   }
-  
+
   @override
   void writeBoolean(bool value) {
     writeByte(value ? 1 : 0);
@@ -114,12 +114,12 @@ class OutputStream extends OutputStreamBase {
       _length = position;
     }
   }
-  
+
   @override
   void writeSByte(int value) {
     writeByte(value);
   }
-  
+
   @override
   void writeInt16(int value) {
     writeByte((value) & 0xff);
@@ -131,7 +131,7 @@ class OutputStream extends OutputStreamBase {
     writeByte((value) & 0xff);
     writeByte((value >> 8) & 0xff);
   }
-  
+
   @override
   void writeInt32(int value) {
     writeByte((value) & 0xff);
@@ -147,7 +147,7 @@ class OutputStream extends OutputStreamBase {
     writeByte((value >> 16) & 0xff);
     writeByte((value >> 24) & 0xff);
   }
-  
+
   @override
   void writeInt64(int value) {
     writeByte((value) & 0xff);
@@ -159,7 +159,7 @@ class OutputStream extends OutputStreamBase {
     writeByte((value >> 48) & 0xff);
     writeByte((value >> 56) & 0xff);
   }
-  
+
   @override
   void writeUint64(int value) {
     writeByte((value) & 0xff);
@@ -171,7 +171,7 @@ class OutputStream extends OutputStreamBase {
     writeByte((value >> 48) & 0xff);
     writeByte((value >> 56) & 0xff);
   }
-  
+
   @override
   void writeFloat32(double value) {
     _byteData.setFloat32(0, value, Endian.little);
@@ -238,7 +238,7 @@ class OutputStream extends OutputStreamBase {
 
     return Uint8List.view(_buffer.buffer, start, end - start);
   }
-  
+
   @override
   void rewind([int count = 1]) {
     if (count > position) {
@@ -247,7 +247,7 @@ class OutputStream extends OutputStreamBase {
       position -= count;
     }
   }
-  
+
   @override
   void skip([int count = 1]) {
     if (position + count > _buffer.length) {
@@ -274,7 +274,6 @@ class OutputStream extends OutputStreamBase {
   static const _blockSize = 0x8000; // 32k block-size
   Uint8List _buffer;
 }
-
 
 class _FileHandle {
   final String _path;
@@ -379,7 +378,7 @@ class OutputFileStream extends OutputStreamBase {
         _bufferPosition = 0,
         _position = 0,
         _number = ByteData(8);
-  
+
   OutputFileStream.fromFile(File file, {int? bufferSize})
       : _length = 0,
         path = file.path,
@@ -617,14 +616,15 @@ class OutputFileStream extends OutputStreamBase {
   @override
   void writeInputStream(InputStreamBase stream) {
     if (stream is InputStream) {
-      final len = stream.length;   // len is the number of bytes not being read.
+      final len = stream.length; // len is the number of bytes not being read.
 
       if (_bufferPosition + len >= _buffer.length) {
         flush();
 
         if (_bufferPosition + len < _buffer.length) {
-          for (int i = 0, j = _bufferPosition, k = stream.offset; i < len;
-               ++i, ++j, ++k) {
+          for (int i = 0, j = _bufferPosition, k = stream.offset;
+              i < len;
+              ++i, ++j, ++k) {
             _buffer[j] = stream.buffer[k];
           }
           _bufferPosition += len;

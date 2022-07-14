@@ -78,7 +78,9 @@ class WzImage extends WzObject with PropertyContainer {
       var foundChild = false;
 
       // TODO: if somethin wrong here, check C# version
-      for (var iwp in (ret == null ? wzProperties : (ret as PropertyContainer).wzProperties)) {
+      for (var iwp in (ret == null
+          ? wzProperties
+          : (ret as PropertyContainer).wzProperties)) {
         if (iwp.name.characters == segments[x]) {
           ret = iwp;
           foundChild = true;
@@ -163,7 +165,8 @@ class WzImage extends WzObject with PropertyContainer {
   ///
   /// [bIsWzUserKeyDefault] Uses the default MapleStory UserKey or a custom key.
   /// [forceReadFromData] Read from data regardless of base data that's changed or not.
-  void SaveImage(WzBinaryWriter writer, [bool bIsWzUserKeyDefault = true, bool forceReadFromData = false]) {
+  void SaveImage(WzBinaryWriter writer,
+      [bool bIsWzUserKeyDefault = true, bool forceReadFromData = false]) {
     if (changed ||
         !bIsWzUserKeyDefault || //  everything needs to be re-written when a custom UserKey is used
         forceReadFromData) // if its not being force-read and written, it saves with the previous WZ encryption IV.

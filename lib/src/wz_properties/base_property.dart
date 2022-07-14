@@ -61,7 +61,8 @@ abstract class WzImageProperty extends WzObject {
   //endregion
 
   //region Constructor
-  WzImageProperty(String name, [Object? value, WzObject? parent]) : super(name, parent);
+  WzImageProperty(String name, [Object? value, WzObject? parent])
+      : super(name, parent);
 
   //endregion
 
@@ -83,7 +84,8 @@ abstract class WzImageProperty extends WzObject {
 
   //#region Extended Properties Parsing
 
-  static void writePropertyList(WzBinaryWriter writer, List<WzImageProperty> props) {
+  static void writePropertyList(
+      WzBinaryWriter writer, List<WzImageProperty> props) {
     if (props.length == 1 && props[0] is WzLuaProperty) {
       props[0].writeValue(writer);
     } else {
@@ -103,7 +105,8 @@ abstract class WzImageProperty extends WzObject {
   /// <summary>
   /// Parses .lua property
   /// </summary>
-  static WzLuaProperty ParseLuaProperty(int offset, WzBinaryReader reader, WzObject parent, WzImage parentImg) {
+  static WzLuaProperty ParseLuaProperty(
+      int offset, WzBinaryReader reader, WzObject parent, WzImage parentImg) {
     // 28 71 4F EF 1B 65 F9 1F A7 48 8D 11 73 E7 F0 27 55 09 DD 3C 07 32 D7 38 21 57 84 70 C1 79 9A 3F 49 F7 79 03 41 F4 9D B9 1B 5F CF 26 80 3D EC 25 5F 9C
     // [compressed int] [bytes]
     var length = reader.readCompressedInt();
@@ -166,23 +169,25 @@ abstract class WzImageProperty extends WzObject {
     return properties;
   }
 
-  static WzExtended _ParseExtendedProp(
-      WzBinaryReader reader, int offset, int endOfBlock, String name, WzObject parent, WzImage imgParent) {
+  static WzExtended _ParseExtendedProp(WzBinaryReader reader, int offset,
+      int endOfBlock, String name, WzObject parent, WzImage imgParent) {
     switch (reader.ReadByte()) {
       case 0x01:
       case 0x1B:
-        return ExtractMore(reader, offset, endOfBlock, name, reader.ReadStringAtOffset(offset + reader.ReadInt32()),
-            parent, imgParent);
+        var iname = reader.ReadStringAtOffset(offset + reader.ReadInt32());
+        return ExtractMore(
+            reader, offset, endOfBlock, name, iname, parent, imgParent);
       case 0x00:
       case 0x73:
-        return ExtractMore(reader, offset, endOfBlock, name, '', parent, imgParent);
+        return ExtractMore(
+            reader, offset, endOfBlock, name, '', parent, imgParent);
       default:
         throw Exception('Invalid byte read at ParseExtendedProp');
     }
   }
 
-  static WzExtended ExtractMore(
-      WzBinaryReader reader, int offset, int eob, String name, String iname, WzObject parent, WzImage imgParent) {
+  static WzExtended ExtractMore(WzBinaryReader reader, int offset, int eob,
+      String name, String iname, WzObject parent, WzImage imgParent) {
     if (iname == '') {
       iname = reader.ReadString();
     }
@@ -190,7 +195,8 @@ abstract class WzImageProperty extends WzObject {
       case 'Property':
         var subProp = WzSubProperty(name, parent);
         reader.position += 2; // Reserved?
-        subProp.AddProperties(WzImageProperty.ParsePropertyList(offset, reader, subProp, imgParent));
+        subProp.AddProperties(WzImageProperty.ParsePropertyList(
+            offset, reader, subProp, imgParent));
         return subProp;
       case 'Canvas':
         var canvasProp = WzCanvasProperty(name, parent);

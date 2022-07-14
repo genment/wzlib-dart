@@ -125,13 +125,12 @@ class WzBinaryWriter extends _BinaryWriterBase {
     var encOffset = position;
     encOffset = (encOffset - Header.fstart) ^ 0xFFFFFFFF;
     encOffset *= Hash;
-    encOffset &= 0xFFFFFFFF;  // keep the LSB (32 bits)
+    encOffset &= 0xFFFFFFFF; // keep the LSB (32 bits)
     encOffset -= Constants.WZ_OffsetConstant;
     encOffset = WzTool.RotateLeft(encOffset, (encOffset & 0x1F));
     var writeOffset = encOffset ^ (value - (Header.fstart * 2));
     WriteUint32(writeOffset);
   }
-
 }
 
 class _BinaryWriterBase {

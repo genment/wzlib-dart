@@ -102,13 +102,13 @@ class WzBinaryReader extends _BinaryReaderBase {
     var offset = position;
     offset = (offset - Header.fstart) ^ 0xFFFFFFFF;
     offset *= Hash;
-    offset &= 0xFFFFFFFF;  // keep the LSB (32 bits)
+    offset &= 0xFFFFFFFF; // keep the LSB (32 bits)
     offset -= Constants.WZ_OffsetConstant;
     offset = WzTool.RotateLeft(offset, (offset & 0x1F));
     var encryptedOffset = ReadUInt32();
     offset ^= encryptedOffset;
     offset += Header.fstart * 2;
-    offset &= 0xFFFFFFFF;  // keep the LSB (32 bits)
+    offset &= 0xFFFFFFFF; // keep the LSB (32 bits)
     return offset;
   }
 
@@ -158,7 +158,7 @@ abstract class _BinaryReaderBase {
 
   int ReadInt16() => _stream.readInt16();
 
-  int ReadUInt16() =>_stream.readUint16();
+  int ReadUInt16() => _stream.readUint16();
 
   int ReadInt32() => _stream.readInt32();
 
@@ -173,10 +173,6 @@ abstract class _BinaryReaderBase {
   double ReadDouble() => _stream.readFloat64();
 
   Uint8List ReadBytes(int count) => _stream.readBytes(count).toUint8List();
-
-  // int Read(Uint8List buffer, int index, int count) {
-  //   return _stream.readIntoSync(buffer, index, index + count);
-  // }
 
   String ReadString();
 

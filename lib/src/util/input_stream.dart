@@ -1,4 +1,5 @@
 part of util;
+
 abstract class InputStreamBase {
   /// How many bytes are left in the stream.
   int get length;
@@ -237,7 +238,7 @@ class InputStream extends InputStreamBase {
   }
 
   /// Read a 64-bit word form the stream.
-  /// 
+  ///
   /// Warning:
   /// Dart does NOT support unsigned int (64 bit) so far.
   /// Therefore a number greater than 0x7fffffffffffffff ([b8] > 0x7f)
@@ -325,7 +326,7 @@ class InputStream extends InputStreamBase {
       throw ArgumentError.value(count, "skip bytes");
     }
   }
-  
+
   /// Reset to the beginning of the stream.
   @override
   void reset() {
@@ -431,8 +432,7 @@ class InputFileStream extends InputStreamBase {
 
   static const int kDefaultBufferSize = 4096;
 
-  InputFileStream(this.path,
-      {int bufferSize = kDefaultBufferSize})
+  InputFileStream(this.path, {int bufferSize = kDefaultBufferSize})
       : _file = FileHandle(path) {
     _fileSize = _file.length;
     // Don't have a buffer bigger than the file itself.
@@ -489,7 +489,7 @@ class InputFileStream extends InputStreamBase {
 
   @override
   InputStreamBase subset([int? position, int? length]) {
-    return InputFileStream.clone(this, position:position, length:length);
+    return InputFileStream.clone(this, position: position, length: length);
   }
 
   /// Read [count] bytes from an [offset] of the current read position, without
@@ -576,7 +576,7 @@ class InputFileStream extends InputStreamBase {
   }
 
   /// Read a 64-bit word form the stream.
-  /// 
+  ///
   /// Warning:
   /// Dart does NOT support unsigned int (64 bit) so far.
   /// Therefore a number greater than 0x7fffffffffffffff ([b8] > 0x7f)
@@ -689,8 +689,8 @@ class InputFileStream extends InputStreamBase {
   @override
   InputStreamBase readBytes(int count) {
     count = min(count, fileRemaining);
-    final bytes = InputFileStream.clone(this, position: _position,
-        length: count);
+    final bytes =
+        InputFileStream.clone(this, position: _position, length: count);
     skip(count);
     return bytes;
   }

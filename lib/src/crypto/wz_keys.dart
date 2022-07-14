@@ -35,7 +35,7 @@ class WzMutableKey {
       startIndex = _keys!.length;
     }
 
-    var zeroIv = IV(Uint8List(0));  // ECB mode does not use IV.
+    var zeroIv = IV(Uint8List(0)); // ECB mode does not use IV.
     final aes = AES(Key(_aesUserKey), mode: AESMode.ecb);
 
     Uint8List encrypted;
@@ -91,7 +91,7 @@ class Constants {
   /// Default AES UserKey used by MapleStory
   /// This key may be replaced with custom bytes by the user. (private server)
   /// </summary>
-  static Uint8List MAPLESTORY_USERKEY_DEFAULT = Uint8List.fromList([ //16 * 8
+  static Uint8List MAPLESTORY_USERKEY_DEFAULT = Uint8List.fromList([ // 16 * 8
     0x13, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00, 0x2A, 0x00, 0x00, 0x00, 0x5B, 0x00, 0x00, 0x00,
     0x08, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00,
     0x06, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x43, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00,
@@ -107,33 +107,28 @@ class Constants {
   /// </summary>
   static Uint8List UserKey_WzLib = MAPLESTORY_USERKEY_DEFAULT;
 
-
   /// <summary>
   /// Determines if 'UserKey_WzLib' to be used by HaRepacker/ HaCreator is equivalent to the default Maplestory User Key.
   /// </summary>
   /// <returns></returns>
   static bool IsDefaultMapleStoryUserKey() {
     bool listEquals<T>(List<T>? a, List<T>? b) {
-      if (a == null)
-        return b == null;
-      if (b == null || a.length != b.length)
-        return false;
-      if (identical(a, b))
-        return true;
+      if (a == null) return b == null;
+      if (b == null || a.length != b.length) return false;
+      if (identical(a, b)) return true;
       for (int index = 0; index < a.length; index += 1) {
-        if (a[index] != b[index])
-          return false;
+        if (a[index] != b[index]) return false;
       }
       return true;
     }
+
     return listEquals(MAPLESTORY_USERKEY_DEFAULT, UserKey_WzLib);
   }
-
 
   /// <summary>
   /// ShuffleBytes used by MapleStory to generate a new IV
   /// </summary>
-  static Uint8List bShuffle = Uint8List.fromList([ //16 * 16
+  static Uint8List bShuffle = Uint8List.fromList([ // 16 * 16
     0xEC, 0x3F, 0x77, 0xA4, 0x45, 0xD0, 0x71, 0xBF, 0xB7, 0x98, 0x20, 0xFC, 0x4B, 0xE9, 0xB3, 0xE1,
     0x5C, 0x22, 0xF7, 0x0C, 0x44, 0x1B, 0x81, 0xBD, 0x63, 0x8D, 0xD4, 0xC3, 0xF2, 0x10, 0x19, 0xE0,
     0xFB, 0xA1, 0x6E, 0x66, 0xEA, 0xAE, 0xD6, 0xCE, 0x06, 0x18, 0x4E, 0xEB, 0x78, 0x95, 0xDB, 0xBA,
@@ -155,7 +150,7 @@ class Constants {
   /// <summary>
   /// Default AES Key used to generate a new IV
   /// </summary>
-  static Uint8List bDefaultAESKeyValue = Uint8List.fromList([
+  static Uint8List bDefaultAESKeyValue = Uint8List.fromList([ // 16 bytes
     0xC6, 0x50, 0x53, 0xF2, 0xA8, 0x42, 0x9D, 0x7F, 0x77, 0x09, 0x1D, 0x26, 0x42, 0x53, 0x88, 0x7C,
   ]);
 

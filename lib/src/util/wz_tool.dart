@@ -73,11 +73,6 @@ class WzTool {
         return Constants.WZ_MSEAIV; //?
       case WzMapleVersion.GMS:
         return Constants.WZ_GMSIV;
-      // case WzMapleVersion.CUSTOM: // custom WZ encryption bytes from stored app setting
-      //   {
-      //     ConfigurationManager config = new ConfigurationManager();
-      //     return config.GetCusomWzIVEncryption(); // fallback with BMS
-      //   }
       case WzMapleVersion.GENERATE: // dont fill anything with GENERATE, it is not supposed to load anything
       case WzMapleVersion.BMS:
       case WzMapleVersion.CLASSIC:

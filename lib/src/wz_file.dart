@@ -46,7 +46,8 @@ class WzFile extends WzObject {
   }
 
   /// Open a wz file from a file on the disk
-  WzFile.fromFile(this.filePath, this.mapleLocalVersion, [this.Version = -1, autoParse = false]) {
+  WzFile.fromFile(this.filePath, this.mapleLocalVersion,
+      [this.Version = -1, autoParse = false]) {
     name = p.basename(filePath!);
 
     if (mapleLocalVersion == WzMapleVersion.GETFROMZLZ) {
@@ -59,7 +60,8 @@ class WzFile extends WzObject {
   }
 
   /// Open a wz file from a file on the disk with a custom WzIv key
-  WzFile.fromFileWithCustomKey(this.filePath, this.wzIv, [bool autoParse = false]) {
+  WzFile.fromFileWithCustomKey(this.filePath, this.wzIv,
+      [bool autoParse = false]) {
     name = p.basename(filePath!);
     mapleLocalVersion = WzMapleVersion.CUSTOM;
 
@@ -108,7 +110,8 @@ class WzFile extends WzObject {
 
     if (Version == -1) {
       // for 64-bit client, return immediately if version 777 works correctly.
-      if (missingEncVer && TryDecodeWithWZVersionNumber(reader, wzVersionHeader, wzVersionHeader64bit)) {
+      if (missingEncVer &&
+          TryDecodeWithWZVersionNumber(reader, wzVersionHeader, wzVersionHeader64bit)) {
         return true;
       }
 
@@ -128,7 +131,8 @@ class WzFile extends WzObject {
     } else {
       versionHash = CheckAndGetVersionHash(wzVersionHeader, Version);
       reader.Hash = versionHash;
-      wzDir = WzDirectory(name, this, reader, versionHash, wzIv)..ParseDirectory();
+      wzDir = WzDirectory(name, this, reader, versionHash, wzIv)
+        ..ParseDirectory();
     }
     return true;
   }
@@ -160,7 +164,8 @@ class WzFile extends WzObject {
     reader.position = header.fstart;
   }
 
-  bool TryDecodeWithWZVersionNumber(WzBinaryReader reader, int useWzVersionHeader, int useMapleStoryPatchVersion) {
+  bool TryDecodeWithWZVersionNumber(WzBinaryReader reader,
+      int useWzVersionHeader, int useMapleStoryPatchVersion) {
     Version = useMapleStoryPatchVersion;
 
     versionHash = CheckAndGetVersionHash(useWzVersionHeader, useMapleStoryPatchVersion);
@@ -173,7 +178,8 @@ class WzFile extends WzObject {
     var fallbackOffsetPosition = reader.position;
     WzDirectory testDirectory;
     try {
-      testDirectory = WzDirectory(name, this, reader, versionHash, wzIv)..ParseDirectory();
+      testDirectory = WzDirectory(name, this, reader, versionHash, wzIv)
+        ..ParseDirectory();
     } on Exception catch (_, exp) {
       // logger.d(exp.toString());
 
@@ -195,7 +201,8 @@ class WzFile extends WzObject {
             case 0x73:
             case 0x1b:
               {
-                wzDir = WzDirectory(name, this, reader, versionHash, wzIv)..ParseDirectory();
+                wzDir = WzDirectory(name, this, reader, versionHash, wzIv)
+                  ..ParseDirectory();
                 return true;
               }
             case 0x30:
@@ -277,11 +284,12 @@ class WzFile extends WzObject {
         c = (versionHash >> 8),
         d = versionHash;
     wzVersionHeader = ~(a ^ b ^ c ^ d);
-    wzVersionHeader &= 0xff;  // keep the LSB (8 bits)
+    wzVersionHeader &= 0xff; // keep the LSB (8 bits)
   }
 
   /// Saves a wz file to the disk, AKA repacking.
-  void SaveToDisk(String path, [WzMapleVersion savingToPreferredWzVer = WzMapleVersion.UNKNOWN]) {
+  void SaveToDisk(String path,
+      [WzMapleVersion savingToPreferredWzVer = WzMapleVersion.UNKNOWN]) {
     // WZ IV
     if (savingToPreferredWzVer == WzMapleVersion.UNKNOWN) {
       wzIv = WzTool.GetIvByMapleVersion(mapleLocalVersion);

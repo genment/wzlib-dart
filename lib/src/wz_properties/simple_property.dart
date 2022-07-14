@@ -1,13 +1,16 @@
 part of wzlib;
 
 abstract class WzSimpleProperty extends WzImageProperty {
-  WzSimpleProperty(String name, [Object? value, WzObject? parent]) : super(name, value, parent);
+  WzSimpleProperty(String name, [Object? value, WzObject? parent])
+      : super(name, value, parent);
 
   @override
-  WzObject? operator [](String name) => throw UnsupportedError('WzSimpleProperty Not supported');
+  WzObject? operator [](String name) =>
+      throw UnsupportedError('WzSimpleProperty Not supported');
 
   @override
-  List<WzImageProperty> get wzProperties => throw UnsupportedError('WzSimpleProperty Not supported');
+  List<WzImageProperty> get wzProperties =>
+      throw UnsupportedError('WzSimpleProperty Not supported');
 
   /// Nothing to dispose
   @override
@@ -25,7 +28,8 @@ abstract class WzNumberProperty extends WzSimpleProperty {
   @override
   set wzValue(Object value) => wzValue = value; // todo ????
 
-  WzNumberProperty(String name, [this.value = 0, WzObject? parent]) : super(name, value, parent);
+  WzNumberProperty(String name, [this.value = 0, WzObject? parent])
+      : super(name, value, parent);
 
   int GetShort() => value.toInt();
 
@@ -49,7 +53,8 @@ class WzShortProperty extends WzNumberProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.Short;
 
-  WzShortProperty(String name, [int value = 0, WzObject? parent]) : super(name, value, parent);
+  WzShortProperty(String name, [int value = 0, WzObject? parent])
+      : super(name, value, parent);
 
   @override
   void writeValue(WzBinaryWriter writer) {
@@ -69,13 +74,13 @@ class WzIntProperty extends WzNumberProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.Int;
 
-  WzIntProperty(String name, [int value = 0, WzObject? parent]) : super(name, value, parent);
+  WzIntProperty(String name, [int value = 0, WzObject? parent])
+      : super(name, value, parent);
 
   @override
   void writeValue(WzBinaryWriter writer) {
     writer.WriteByte(_prefixByte);
-    writer.WriteCompressedInt(
-        value.toInt()); // todo: test toInt() vs as int: 'num a = 3; a as int; a.toInt(); if(a is int)...'
+    writer.WriteCompressedInt(value.toInt()); // todo: test toInt() vs as int: 'num a = 3; a as int; a.toInt(); if(a is int)...'
   }
 
   @override
@@ -90,7 +95,8 @@ class WzLongProperty extends WzNumberProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.Long;
 
-  WzLongProperty(String name, [int value = 0, WzObject? parent]) : super(name, value, parent);
+  WzLongProperty(String name, [int value = 0, WzObject? parent])
+      : super(name, value, parent);
 
   @override
   void writeValue(WzBinaryWriter writer) {
@@ -110,7 +116,8 @@ class WzFloatProperty extends WzNumberProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.Float;
 
-  WzFloatProperty(String name, [double value = .0, WzObject? parent]) : super(name, value, parent);
+  WzFloatProperty(String name, [double value = .0, WzObject? parent])
+      : super(name, value, parent);
 
   @override
   void writeValue(WzBinaryWriter writer) {
@@ -136,7 +143,8 @@ class WzDoubleProperty extends WzNumberProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.Double;
 
-  WzDoubleProperty(String name, [double value = .0, WzObject? parent]) : super(name, value, parent);
+  WzDoubleProperty(String name, [double value = .0, WzObject? parent])
+      : super(name, value, parent);
 
   @override
   void writeValue(WzBinaryWriter writer) {
@@ -186,7 +194,8 @@ class WzStringProperty extends WzSimpleProperty {
   @override
   WzPropertyType get propertyType => WzPropertyType.String;
 
-  WzStringProperty(String name, [this.value = '', WzObject? parent]) : super(name, value, parent);
+  WzStringProperty(String name, [this.value = '', WzObject? parent])
+      : super(name, value, parent);
 
   @override
   WzStringProperty deepClone() {

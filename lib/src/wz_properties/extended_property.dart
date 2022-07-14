@@ -5,7 +5,8 @@ part of wzlib;
 ///////////////////////////////////////////////////////////
 
 abstract class WzExtended extends WzImageProperty {
-  WzExtended(String name, [Object? value, WzObject? parent]) : super(name, parent);
+  WzExtended(String name, [Object? value, WzObject? parent])
+      : super(name, parent);
 
   @override
   WzObject? operator [](String name) => null; // not available
@@ -26,7 +27,7 @@ class WzSoundProperty extends WzExtended {
   // Object wavFormat; // todo: [WaveFormat] not implemented
 
   static var soundHeader = Uint8List.fromList([
-    0x02, // This comment does nothing but disable formatting.
+    0x02, // This comment does nothing but disables formatting.
     0x83, 0xEB, 0x36, 0xE4, 0x4F, 0x52, 0xCE, 0x11, 0x9F, 0x53, 0x00, 0x20,
     0xAF, 0x0B, 0xA7, 0x70,
     0x8B, 0xEB, 0x36, 0xE4, 0x4F, 0x52, 0xCE, 0x11, 0x9F, 0x53, 0x00, 0x20,
@@ -46,7 +47,9 @@ class WzSoundProperty extends WzExtended {
   @override
   set wzValue(Object value) => {}; // not allowed
 
-  WzSoundProperty(String name, this.wzReader, [bool parseNow = false, WzObject? parent]) : super(name, null, parent) {
+  WzSoundProperty(String name, this.wzReader,
+      [bool parseNow = false, WzObject? parent])
+      : super(name, null, parent) {
     wzReader.position++;
 
     //note - soundDataLen does NOT include the length of the header.
@@ -73,30 +76,6 @@ class WzSoundProperty extends WzExtended {
   /// Convert bytes to WaveFormat structure. ( C/C++ struct )
   static T _BytesToStruct<T>(Uint8List data) {
     throw UnimplementedError('not supported');
-    // GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-    // try
-    // {
-    // return Marshal.PtrToStructure<T>(handle.AddrOfPinnedObject());
-    // }
-    // finally
-    // {
-    // handle.Free();
-    // }
-    // }
-    //
-    // private static T BytesToStructConstructorless<T>(byte[] data)
-    // {
-    // GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-    // try
-    // {
-    // T obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-    // Marshal.PtrToStructure<T>(handle.AddrOfPinnedObject(), obj);
-    // return obj;
-    // }
-    // finally
-    // {
-    // handle.Free();
-    // }
   }
 
   /// Parse raw (header) data to standard mp3 or other audio formats header
@@ -165,7 +144,8 @@ class WzUOLProperty extends WzExtended {
   @override
   WzPropertyType get propertyType => WzPropertyType.UOL;
 
-  WzUOLProperty(String name, [this.uol = '', WzObject? parent]) : super(name, parent);
+  WzUOLProperty(String name, [this.uol = '', WzObject? parent])
+      : super(name, parent);
 
 //region Resolve UOL
 
@@ -220,7 +200,8 @@ class WzUOLProperty extends WzExtended {
             _linkedTarget = (_linkedTarget as WzImage)[path];
             break;
           case WzDirectory:
-            _linkedTarget = (_linkedTarget as WzDirectory)[(path.endsWith('.img')) ? (path) : (path + '.img')];
+            _linkedTarget = (_linkedTarget as WzDirectory)[
+                (path.endsWith('.img')) ? (path) : (path + '.img')];
             break;
           default:
             return null;
@@ -276,7 +257,9 @@ class WzVectorProperty extends WzExtended {
   @override
   WzPropertyType get propertyType => WzPropertyType.Vector;
 
-  WzVectorProperty(String name, [WzIntProperty? x, WzIntProperty? y, WzObject? parent]) : super(name, parent) {
+  WzVectorProperty(String name,
+      [WzIntProperty? x, WzIntProperty? y, WzObject? parent])
+      : super(name, parent) {
     if (x != null) {
       this.x
         ..value = x.value
@@ -432,7 +415,9 @@ class WzCanvasProperty extends WzExtended with PropertyContainer {
         // https://github.com/lastbattle/Harepacker-resurrected/pull/142
 
         // TODO: 这里写死了 wz 后缀的文件名，如果汉化需要的话，必须改成 bin 或者 (wz|bin) 或者 *
-        var prefixWz = RegExp('^([A-Za-z]+)([0-9]*).wz').firstMatch(wzFileParent.name)?.group(1);
+        var prefixWz = RegExp('^([A-Za-z]+)([0-9]*).wz')
+            .firstMatch(wzFileParent.name)
+            ?.group(1);
         prefixWz = prefixWz.toString() + '/'; // remove ended numbers and .wz from wzfile name
 
         WzObject? foundProperty;
@@ -614,7 +599,8 @@ class WzSubProperty extends WzExtended with PropertyContainer {
     // wz_image is slightly different.
     var segments = path.characters.split('/'.characters).toList();
     if (segments[0] == '..'.characters) {
-      return (parent as WzImageProperty)[path.substring(name.indexOf('/') + 1)] as WzImageProperty;
+      return (parent as WzImageProperty)[path.substring(name.indexOf('/') + 1)]
+          as WzImageProperty;
     }
 
     WzImageProperty ret = this;

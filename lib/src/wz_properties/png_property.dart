@@ -55,7 +55,9 @@ class WzPngProperty extends WzImageProperty {
     }
   }
 
-  WzPngProperty([WzBinaryReader? reader, bool parseNow = false, WzObject? parent]) : super('PNG', null, parent) {
+  WzPngProperty(
+      [WzBinaryReader? reader, bool parseNow = false, WzObject? parent])
+      : super('PNG', null, parent) {
     if (reader == null) return;
 
     width = reader.readCompressedInt();
@@ -63,7 +65,7 @@ class WzPngProperty extends WzImageProperty {
     format1 = reader.readCompressedInt();
     format2 = reader.ReadByte();
     reader.position += 4;
-    _offs = reader.position;  // 将位置保存下来，如果 parseNow == false，那么以后解析的时候，就从这里开始读取
+    _offs = reader.position; // 将位置保存下来，如果 parseNow == false，那么以后解析的时候，就从这里开始读取
     var len = reader.ReadInt32() - 1;
     reader.position += 1;
 
@@ -79,7 +81,7 @@ class WzPngProperty extends WzImageProperty {
   //region Parsing Methods
 
   /// 将 wz 数据解析成 png (Bitmap) 图像，相反的过程是[CompressPng]
-  Bitmap ParsePng(    bool saveInMemory  ) {
+  Bitmap ParsePng(bool saveInMemory) {
     // var rawBytes = _GetRawImage(saveInMemory);
     throw UnimplementedError('TODO: implement PngProperty.ParsePng()');
   }
@@ -117,7 +119,8 @@ class WzPngProperty extends WzImageProperty {
 
   /// 目前没有被使用，但是应该是会被 [ParsePng] 调用的？？？
   Uint8List _Decompress(Uint8List compressedBuffer, int decompressedSize) {
-    return archive.ZLibDecoder().decodeBuffer(archive.InputStream(compressedBuffer)..skip(2))
+    return archive.ZLibDecoder()
+            .decodeBuffer(archive.InputStream(compressedBuffer)..skip(2))
         as Uint8List;
   }
 
@@ -130,7 +133,7 @@ class WzPngProperty extends WzImageProperty {
 
   Uint8List _GetRawImage(bool saveInMemory) {
     var rawImageBytes = GetCompressedBytes(saveInMemory);
-    
+
     // var uncompressedSize = 0;
 
     // switch (format) {
@@ -141,7 +144,7 @@ class WzPngProperty extends WzImageProperty {
     //   case 0x03:
     //     uncompressedSize = width * height * 4; break;
     //   case 0x101:
-    //     uncompressedSize = width * height * 2; break; 
+    //     uncompressedSize = width * height * 2; break;
     //   case 0x201:
     //     uncompressedSize = width * height * 2; break;
     //   case 0x205:
@@ -156,7 +159,10 @@ class WzPngProperty extends WzImageProperty {
 
     var input = archive.InputStream(rawImageBytes);
     var header = input.readUint16();
-    listWzUsed = header != 0x9C78 && header != 0xDA78 && header != 0x0178 && header != 0x5E78;
+    listWzUsed = header != 0x9C78 &&
+        header != 0xDA78 &&
+        header != 0x0178 &&
+        header != 0x5E78;
 
     if (listWzUsed) {
       throw UnsupportedError('Unsupported listWzUsed header: $header');

@@ -1,6 +1,6 @@
 part of wzlib;
 
-enum WzMapleVersion{
+enum WzMapleVersion {
   GMS,
   EMS,
   BMS,
