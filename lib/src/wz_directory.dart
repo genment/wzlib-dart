@@ -113,13 +113,12 @@ class WzDirectory extends WzObject {
     }
   }
 
-  void SaveImages(WzBinaryWriter wzWriter, RandomAccessFile raf) {
+  void SaveImages(WzBinaryWriter wzWriter, InputFileStream fstream) {
     for (var img in wzImages) {
       if (img.changed) {
         // read from .TEMP file
-        raf.setPositionSync(img.tempFileStart);
-        var buffer = Uint8List(img.blockSize);
-        raf.readIntoSync(buffer, 0, img.blockSize);
+        fstream.position = img.tempFileStart;
+        var buffer = fstream.readBytes(img.blockSize).toUint8List();
         wzWriter.WriteBytes(buffer);
       } else {
         // read from original .wz file
@@ -128,7 +127,7 @@ class WzDirectory extends WzObject {
       }
     }
     for (var dir in wzDirectories) {
-      dir.SaveImages(wzWriter, raf);
+      dir.SaveImages(wzWriter, fstream);
     }
   }
 
@@ -137,7 +136,7 @@ class WzDirectory extends WzObject {
   /// [useIv] The IV to use while generating the data file. If null, it'll use the WzDirectory default.
   /// [bIsWzUserKeyDefault] Uses the default MapleStory UserKey or a custom key.
   /// [prevOpenedStream] The previously opened file stream.
-  int GenerateDataFile(Uint8List? useIv, bool bIsWzUserKeyDefault, RandomAccessFile prevOpenedStream) {
+  int GenerateDataFile(Uint8List? useIv, bool bIsWzUserKeyDefault, OutputFileStream prevOpenedStream) {
     // whole shit gonna be re-written if its a custom IV specified
     var useCustomIv = useIv != null;
 
@@ -159,9 +158,9 @@ class WzDirectory extends WzObject {
         img.SaveImage(imgWriter, bIsWzUserKeyDefault, useCustomIv);
         var imgBytes = imgWriter.getBytes();
         img.CalculateAndSetImageChecksum(imgBytes);
-        img.tempFileStart = prevOpenedStream.positionSync();
-        prevOpenedStream.writeFromSync(imgBytes);
-        img.tempFileEnd = prevOpenedStream.positionSync();
+        img.tempFileStart = prevOpenedStream.position;
+        prevOpenedStream.writeBytes(imgBytes);
+        img.tempFileEnd = prevOpenedStream.position;
         // imgWriter.close();
       } else {
         img.tempFileStart = img.offset;

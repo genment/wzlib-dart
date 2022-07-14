@@ -289,6 +289,14 @@ class _FileHandle {
     _file = file.openSync(mode: mode);
   }
 
+  _FileHandle.fromFile(File file,
+      {FileMode mode = FileMode.read, bool recursive = false})
+      : _path = file.path,
+        _position = 0 {
+    file.createSync(recursive: recursive);
+    _file = file.openSync(mode: mode);
+  }
+
   String get path => _path;
 
   int get position => _position;
@@ -363,13 +371,25 @@ class OutputFileStream extends OutputStreamBase {
   int _bufferPosition;
 
   OutputFileStream(this.path, {int? bufferSize})
-      : _length = 0
-      , _file = _FileHandle(path, mode: FileMode.write, recursive: true)
-      , _buffer = Uint8List(bufferSize == null ? 8192 : bufferSize < 1 ? 1 :
-                            bufferSize)
-      , _bufferPosition = 0
-      , _position = 0
-      , _number = ByteData(8);
+      : _length = 0,
+        _file = _FileHandle(path, mode: FileMode.write, recursive: true),
+        _buffer = Uint8List(bufferSize == null
+            ? 8192
+            : bufferSize < 1 ? 1 : bufferSize),
+        _bufferPosition = 0,
+        _position = 0,
+        _number = ByteData(8);
+  
+  OutputFileStream.fromFile(File file, {int? bufferSize})
+      : _length = 0,
+        path = file.path,
+        _file = _FileHandle.fromFile(file, mode: FileMode.write, recursive: true),
+        _buffer = Uint8List(bufferSize == null
+            ? 8192
+            : bufferSize < 1 ? 1 : bufferSize),
+        _bufferPosition = 0,
+        _position = 0,
+        _number = ByteData(8);
 
   @override
   int get position => _position;

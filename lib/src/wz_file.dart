@@ -301,9 +301,9 @@ class WzFile extends WzObject {
 
     // this .TEMP file will contain everything except Header
     var tempFile = File(path + '.TEMP');
-    var raFile = tempFile.openSync(mode: FileMode.write); // replace with or create a new empty file
-    wzDir.GenerateDataFile(bIsWzIvSimilar ? null : wzIv, bIsWzUserKeyDefault, raFile);
-    raFile.closeSync(); // must close
+    var tempOFS = OutputFileStream.fromFile(tempFile);
+    wzDir.GenerateDataFile(bIsWzIvSimilar ? null : wzIv, bIsWzUserKeyDefault, tempOFS);
+    tempOFS.close(); // must close
 
     WzTool.StringCache.clear();
 
@@ -332,12 +332,9 @@ class WzFile extends WzObject {
     wzWriter.StringCache.clear();
 
     // open TEMP file again for reading
-    var fs = tempFile.openSync();
-    wzDir.SaveImages(wzWriter, fs);
-    fs.closeSync(); // must close
-
-    // delete TEMP file
-    tempFile.deleteSync();
+    var tempIFS = InputFileStream.fromFile(tempFile);
+    wzDir.SaveImages(wzWriter, tempIFS);
+    tempIFS.close().whenComplete(() => tempFile.delete()); // close and delete
 
     wzWriter.StringCache.clear();
 

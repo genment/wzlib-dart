@@ -352,8 +352,15 @@ class FileHandle {
   late int _length;
 
   FileHandle(this._path)
-  : _file = File(_path).openSync()
-  , _position = 0 {
+      : _file = File(_path).openSync(),
+        _position = 0 {
+    _length = _file!.lengthSync();
+  }
+
+  FileHandle.fromFile(File file)
+      : _position = 0,
+        _path = file.path,
+        _file = file.openSync() {
     _length = _file!.lengthSync();
   }
 
@@ -436,12 +443,21 @@ class InputFileStream extends InputStreamBase {
     _readBuffer();
   }
 
+  InputFileStream.fromFile(File file, {int bufferSize = kDefaultBufferSize})
+      : path = file.path,
+        _file = FileHandle.fromFile(file) {
+    _fileSize = _file.length;
+    bufferSize = max(min(bufferSize, _fileSize), 8);
+    _buffer = Uint8List(bufferSize);
+    _readBuffer();
+  }
+
   InputFileStream.clone(InputFileStream other, {int? position, int? length})
-    : path = other.path
-    , _file = other._file
-    , _fileOffset = other._fileOffset + (position ?? 0)
-    , _fileSize = length ?? other._fileSize
-    , _buffer = Uint8List(kDefaultBufferSize) {
+      : path = other.path,
+        _file = other._file,
+        _fileOffset = other._fileOffset + (position ?? 0),
+        _fileSize = length ?? other._fileSize,
+        _buffer = Uint8List(kDefaultBufferSize) {
     _readBuffer();
   }
 
